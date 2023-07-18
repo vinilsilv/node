@@ -20,6 +20,7 @@ app.use(session({
 app.listen(port);
 
 app.get('/users', (req, res) => {
+  if (!req.session.authorized) return res.sendStatus(401);
   res.json(users)
 });
 
