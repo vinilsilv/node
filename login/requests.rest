@@ -18,6 +18,10 @@ Content-Type: application/json
 
 {
   "username": "V",
-  "password": "pass",
-  "name"
+  "password": "passs"
 }
+
+###
+
+GET http://localhost:3000/logout
+Content-Type: application/json

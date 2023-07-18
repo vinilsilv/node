@@ -1,12 +1,21 @@
 const express = require('express');
 const bcrypt = require('bcrypt');
+const session = require('express-session')
 
 const users = [];
 const port = 3000;
 
 const app = express();
 
-app.use(express.json())
+app.use(express.json());
+app.use(session({
+  secret: 'secretHash',
+  cookie: {
+    sameSite: 'strict',
+    resave: true,
+    saveUnitialized: true
+  }
+}));
 
 app.listen(port);
 
@@ -48,10 +57,17 @@ app.post('/login', async (req, res) => {
     if(await !bcrypt.compare(req.body.password, user.password))
       return res.status(400).send("Username or password are invalid.")
     
-    res.sendStatus(200);
+    req.session.user = user;
+    req.session.authorized = true;
+    res.status(200).send(req.session);
 
 
-  } catch {
-    return res.sendStatus(400)
+  } catch (error) {
+    return res.status(400).send(error);
   }
+});
+
+app.get('/logout', (req, res) => {
+  req.session.destroy();
+  res.sendStatus(200);
 })
